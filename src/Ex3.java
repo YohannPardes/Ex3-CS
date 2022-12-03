@@ -106,6 +106,21 @@ public class Ex3 {
 			}
 		}
 
+		// CIRCLE
+		if(_mode.equals("Circle")) {
+			if (tempP.ix() == -1) {
+				tempP = p;
+			}
+
+			else {
+
+				// dx^2 + dy^2 (not sqrt for simplified calculation)
+				double rad = (Math.pow(p.ix() - tempP.ix(), 2) + Math.pow(p.iy()-tempP.iy(), 2));
+				_map.drawCircle(tempP, rad, col);
+				tempP = new Point2D(-1, -1);
+			}
+		}
+
 		// RECT
 		if(_mode.equals("Rect")) {
 			if (tempP.ix() == -1) {
