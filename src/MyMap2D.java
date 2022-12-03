@@ -93,14 +93,17 @@ public class MyMap2D implements Map2D{
 	@Override
 	public void drawRect(Point2D p1, Point2D p2, int col) {
 
-		// drawing the 4 vertices of the square
-		drawSegment(p1, new Point2D(p1.ix(), p2.iy()), col);
-		drawSegment(p1, new Point2D(p2.ix(), p1.iy()), col);
-		drawSegment(p2, new Point2D(p1.ix(), p2.iy()), col);
-		drawSegment(p2, new Point2D(p2.ix(), p1.iy()), col);
+		//drawing all the points in the square
+		int deltaX = Math.abs(p1.ix() - p2.ix());
+		int deltaY = Math.abs(p1.iy() - p2.iy());
+		int bottomLeftX = p1.ix()<p2.ix() ? p1.ix() : p2.ix();
+		int bottomLeftY = p1.iy()<p2.iy() ? p1.iy() : p2.iy();
 
-		// filling the square
-		
+		for (int x = 0; x < deltaX + 1; x++) {
+			for (int y = 0; y < deltaY + 1; y++) {
+				setPixel(bottomLeftX + x, bottomLeftY + y, col);
+			}
+		}
 	}
 
 	@Override
@@ -110,16 +113,45 @@ public class MyMap2D implements Map2D{
 	}
 
 	@Override
-	public int fill(Point2D p, int new_v) {
+	public int fill(Point2D p, int newCol) {
 
-		int startingCLR = getPixel(p);
-
-
+		int filledCol = getPixel(p);
+		fillRec(p.ix(), p.iy(), newCol, filledCol);
 		return 0;
 	}
 
+	/*
+	Given x, y coordinate, the wanted color, and the changed color,
+	 this recursive function draw the inner part of a close form
+	(this function is a sub part of the fill function)
+	 */
+	public void fillRec(int x, int y, int newCol, int oldCol){
+
+		this.setPixel(x, y, newCol);
+
+		// up
+		if ((0 <= y+1 & y+1< getHeight()) && this.getPixel(x, y + 1) == oldCol){
+			fillRec(x, y + 1, newCol, oldCol);
+		}
+
+		// down
+		if ((0 <= y-1 & y-1< getHeight()) && this.getPixel(x, y - 1) == oldCol){
+			fillRec(x, y - 1, newCol, oldCol);
+		}
+
+		// right
+		if ((0 <= x+1 & x+1< getWidth()) && this.getPixel(x + 1, y) == oldCol){
+			fillRec(x + 1, y, newCol, oldCol);
+		}
+
+		// left
+		if ((0 <= x-1 & x-1< getWidth()) && this.getPixel(x - 1, y) == oldCol){
+			fillRec(x - 1, y, newCol, oldCol);
+		}
+	}
+
 	@Override
-	public int fill(int x, int y, int new_v) {
+	public int fill(int x, int y, int newCol) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

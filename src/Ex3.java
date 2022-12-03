@@ -1,7 +1,7 @@
 import java.awt.Color;
 
 /**
- * This class is a simple "inter-layer" connecting (aka simplifing) the
+ * This class is a simple "inter-layer" connecting (aka simplifying) the
  * StdDraw_Ex3 with the Map2D interface.
  * Written for 101 java course it uses simple static functions to allow a 
  * "Singleton-like" implementation.
@@ -13,14 +13,16 @@ public class Ex3 {
 	private static Color _color = Color.blue;
 	private static String _mode = "";
 	public static final int WHITE = Color.WHITE.getRGB();
+	public static final int BLACK = Color.BLACK.getRGB();
 	public static Point2D tempP = new Point2D(-1, -1);
+	public static String tempM = "";
 
 	public static void main(String[] args) {
 		int dim = 10;  // init matrix (map) 10*10
 		init(dim);
 	}
 
-	public static final int BLACK = Color.BLACK.getRGB();
+
 	private static void init(int x) {
 		StdDraw_Ex3.clear();
 		_map = new MyMap2D(x);
@@ -55,6 +57,7 @@ public class Ex3 {
 	}
 	public static void actionPerformed(String p) {
 		_mode = p;
+
 		//colors
 		if(p.equals("Blue")) {_color = Color.BLUE; }
 		if(p.equals("White")) {_color = Color.WHITE; }
@@ -69,12 +72,20 @@ public class Ex3 {
 		if(p.equals("80x80")) {init(80);}
 		if(p.equals("160x160")) {init(160);}
 
+		// CLEAR
+		if(p.equals("Clear")) init(_map.getWidth());
+
 		drawArray(_map);
 		
 	}
 	public static void mouseClicked(Point2D p) {
 		System.out.println(p);
 		int col = _color.getRGB();
+		if (!(_mode.equals(tempM))){
+			tempM = _mode;
+			tempP = new Point2D (-1, -1);
+		}
+
 
 		// POINT
 		if(_mode.equals("Point")) {
@@ -85,11 +96,13 @@ public class Ex3 {
 		if(_mode.equals("Segment")) {
 			if (tempP.ix() == -1){
 				tempP = p;
+				tempM = _mode;
 			}
 
 			else {
 				_map.drawSegment(tempP, p, col);
 				tempP = new Point2D (-1, -1);
+
 			}
 		}
 
@@ -108,11 +121,6 @@ public class Ex3 {
 		// FILL
 		if(_mode.equals("Fill")) {
 			_map.fill(p, col);
-		}
-
-		// CLEAR
-		if(_mode.equals("Clear")) {
-			_map.init(_map.getWidth());
 		}
 
 		// GOL
