@@ -16,13 +16,10 @@ public class Ex3 {
 	public static final int BLACK = Color.BLACK.getRGB();
 	public static Point2D tempP = new Point2D(-1, -1);
 	public static String tempM = "";
-
 	public static void main(String[] args) {
 		int dim = 10;  // init matrix (map) 10*10
 		init(dim);
 	}
-
-
 	private static void init(int x) {
 		StdDraw_Ex3.clear();
 		_map = new MyMap2D(x);
@@ -31,7 +28,6 @@ public class Ex3 {
 		_map.fill(WHITE);
 		drawArray(_map);		
 	}
-	
 	 public static void drawGrid(Map2D map) {
 		 int w = map.getWidth();
 		 int h = map.getHeight();

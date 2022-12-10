@@ -215,16 +215,15 @@ public class MyMap2D implements Map2D{
 	 * @return - an array of 2D points
 	 */
 	@Override
-	public Point2D[] shortestPath(Point2D p1, Point2D p2) {
+	public Point2D[] shortestPath(Point2D p1, Point2D p2){
 		// TODO Auto-generated method stub
 
 		MyMap2D tempMap = this.initShortestPathMap(p1, p2);
 		forwardSearch(p2, tempMap);
-		Point2D[] shortestPath = backwardTracking(p1, p2, tempMap);
-		return shortestPath;
+		return backwardTracking(p2, tempMap);
 	}
-	private Point2D[] backwardTracking(Point2D p1, Point2D p2, MyMap2D tempMap) {
-		ArrayList <Point2D> shortestPath = new ArrayList<Point2D>();
+	private Point2D[] backwardTracking(Point2D p2, MyMap2D tempMap){
+		ArrayList <Point2D> shortestPath = new ArrayList<>();
 		shortestPath.add(p2);
 
 		Point2D currentPoint = p2;
@@ -242,19 +241,21 @@ public class MyMap2D implements Map2D{
 			}
 			shortestPath.add(savedP);
 			currentPoint = savedP;
-			System.out.println(tempMap.getPixel(currentPoint));
+
+			if (currentPoint == null){
+				System.out.println("There is no path between those points");
+				return new Point2D[0];
+			}
 		}
 
-		Point2D[] returnVal = shortestPath.toArray(new Point2D[shortestPath.size()]);
-		return returnVal;
+		return shortestPath.toArray(new Point2D[shortestPath.size()]); //converting to regular array
 	}
 	private static int forwardSearch(Point2D p2, MyMap2D tempMap) {
-		ArrayList<Point2D> nextSteps = new ArrayList<Point2D>(); // the array holding all the neighbors
+		ArrayList<Point2D> nextSteps; // the array holding all the neighbors
 
 		int currentStep = 0;
 		boolean update = true;
 		while (update) {
-			System.out.println(tempMap);
 			//update the neighbors of each not blank cell (-1)
 			update = false;
 			for (int x = 0; x < tempMap.getWidth(); x++) {
@@ -297,7 +298,7 @@ public class MyMap2D implements Map2D{
 		return tempMap;
 	}
 	private ArrayList<Point2D> getValidNeighbors(int x, int y) {
-		ArrayList<Point2D> neighbors = new ArrayList<Point2D>();
+		ArrayList<Point2D> neighbors = new ArrayList<>();
 
 		// check right
 		Point2D rightN = new Point2D(x + 1, y);
@@ -365,16 +366,5 @@ public class MyMap2D implements Map2D{
 				this.setPixel(x, y, c);
 			}
 		}
-	}
-
-	@Override
-	public String toString() {
-		String str = "";
-
-		for (int i = 0; i<this.getHeight(); i+=1){
-			str += Arrays.toString(this._map[i]) + "\n";
-		}
-
-		return str;
 	}
 }
