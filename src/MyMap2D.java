@@ -1,9 +1,14 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * This class implements the Map2D interface.
- * You should change (implement) this class as part of Ex3. */
+ * The available actions are:
+ * Fill - filling a space.
+ * drawRect - drawing a rectangle.
+ * drawCircle - drawing a circle.
+ * drawSegment - drawing a line.
+ * shortestPath - finding the shortest path between 2 points.
+ * */
 public class MyMap2D implements Map2D{
 	private int[][] _map;
 	public MyMap2D(int w, int h) {init(w,h);}
@@ -12,36 +17,80 @@ public class MyMap2D implements Map2D{
 		this(data.length, data[0].length);
 		init(data);
 	}
+
+	/**
+	 * Initialize MyMap2D._map attribute as an 2D array
+	 * @param w the number of rows
+	 * @param h the number of columns
+	 */
 	@Override
 	public void init(int w, int h) {
 		_map = new int[w][h];
-
 	}
+
+	/**
+	 * Setting all the 2DPoints color in _map to white color (255, 255, 255)
+	 * @param arr _map
+	 */
 	@Override
 	public void init(int[][] arr) {
 		init(arr.length,arr[0].length);
 		for(int x = 0;x<this.getWidth()&& x<arr.length;x++) {
-			for(int y=0;y<this.getHeight()&& y<arr[0].length;y++) {
+			for(int y = 0; y<this.getHeight()&& y<arr[0].length;y++) {
 				this.setPixel(x, y, WHITE);
 			}
 		}
 	}
+
+	/**
+	 * Give the width (lenght of each row) of _map attribute
+	 * @return the width of _map matrice
+	 */
 	@Override
 	public int getWidth() {return _map.length;}
+	/**
+	 * Give the height (number of rows) of _map attribute
+	 * @return the width of _map matrice
+	 */
 	@Override
 	public int getHeight() {return _map[0].length;}
+
+	/**
+	 * Given a x, y coordinates return corresponding pixel value
+	 * @param x x coordinate
+	 * @param y y coordinate
+	 * @return pixel value
+	 */
 	@Override
 	public int getPixel(int x, int y) { return _map[x][y];}
+	/**
+	 * Given a 2Dpoint return the corresponding pixel value at it's x, y coordinates
+	 * @param p the 2DPoint from which check the pixel val
+	 * @return pixel value
+	 */
 	@Override
 	public int getPixel(Point2D p) {
 		return this.getPixel(p.ix(),p.iy());
 	}
 
+	/**
+	 * Given an x, y coordinates change corresponding pixel value to the wanted color
+	 * @param x x coordinate
+	 * @param y y coordinate
+	 * @param v the wanted color
+	 * @return pixel value
+	 */
 	public void setPixel(int x, int y, int v) {_map[x][y] = v;}
+
+	/**
+	 * Given a 2DPoint change the color at his x, y coordinates
+	 * @param p The Point2D from which check the color
+	 * @param v the wanted color
+	 * @return pixel value
+	 */
 	public void setPixel(Point2D p, int v) {
 		setPixel(p.ix(), p.iy(), v);
 	}
-
 	/**
 	 * This function draw a 2D line given a starting point and an ending point and a color.
 	 * This is an implementation of Bresenham’s line Algorithm.*
@@ -222,6 +271,49 @@ public class MyMap2D implements Map2D{
 		forwardSearch(p2, tempMap);
 		return backwardTracking(p2, tempMap);
 	}
+
+	/**
+	 * This function is a sub part of MyMap2D.shortestPath function
+	 * Given a processed MyMap2D using MyMap2D.initShortestPathMap updating the map until reaching the end point
+	 * using a simple wave propagation algorithm
+	 * @param p2 the ending point of the wanted path
+	 * @param tempMap The pre-processed map from MyMap2D.initShortestPathMap
+	 * @return the number of steps required to complete the path or -1 if there is no valid path
+	 */
+	private static int forwardSearch(Point2D p2, MyMap2D tempMap) {
+		ArrayList<Point2D> nextSteps; // the array holding all the neighbors
+
+		int currentStep = 0;
+		boolean update = true;
+		while (update) {
+			update = false;
+			for (int x = 0; x < tempMap.getWidth(); x++) {
+				for (int y = 0; y < tempMap.getHeight(); y++) {
+					nextSteps = tempMap.getValidNeighbors(x, y);
+					for (Point2D neighbor : nextSteps) {
+						//update the neighbors of each not blank cell (-1)
+						if (tempMap.getPixel(neighbor) == currentStep && tempMap.getPixel(x, y) == -1) {
+							tempMap.setPixel(x, y, currentStep + 1);
+							update = true;
+
+							if (tempMap.checkEnd(p2)) { //getting out of the loops
+								return currentStep;
+							}
+						}
+					}
+				}
+			}
+			currentStep += 1;
+		}
+		return -1;
+	}
+	/**
+	 * This function is a sub part of MyMap2D.shortestPath function
+	 * Given a processed pathMap using MyMap2D.shortestPath return the actual shortest path as a Point2D array
+	 * @param p2  The ending point of the path
+	 * @param tempMap  MyMap2D.shortestPath's processed tempMap
+	 * @return The shortest path as a Point2D array
+	 */
 	private Point2D[] backwardTracking(Point2D p2, MyMap2D tempMap){
 		ArrayList <Point2D> shortestPath = new ArrayList<>();
 		shortestPath.add(p2);
@@ -250,33 +342,17 @@ public class MyMap2D implements Map2D{
 
 		return shortestPath.toArray(new Point2D[shortestPath.size()]); //converting to regular array
 	}
-	private static int forwardSearch(Point2D p2, MyMap2D tempMap) {
-		ArrayList<Point2D> nextSteps; // the array holding all the neighbors
 
-		int currentStep = 0;
-		boolean update = true;
-		while (update) {
-			//update the neighbors of each not blank cell (-1)
-			update = false;
-			for (int x = 0; x < tempMap.getWidth(); x++) {
-				for (int y = 0; y < tempMap.getHeight(); y++) {
-					nextSteps = tempMap.getValidNeighbors(x, y);
-					for (Point2D neighbor : nextSteps) {
-						if (tempMap.getPixel(neighbor) == currentStep && tempMap.getPixel(x, y) == -1) {
-							tempMap.setPixel(x, y, currentStep + 1);
-							update = true;
-
-							if (tempMap.checkEnd(p2)) { //getting out of the loops
-								return currentStep;
-							}
-						}
-					}
-				}
-			}
-			currentStep += 1;
-		}
-		return -1;
-	}
+	/**
+	 * Given a MyMap2D object this function initialize a MyMap2D object for pathfinding algorithm where :
+	 * 0 is the starting point
+	 * -1 is an empty space
+	 * -2 is a wall
+	 * -10 is the ending point
+	 * @param p1 the starting point
+	 * @param p2 the ending point
+	 * @return the processed MyMap2D
+	 */
 	private MyMap2D initShortestPathMap(Point2D p1, Point2D p2) {
 		MyMap2D tempMap = new MyMap2D(this.getHeight());
 
@@ -297,6 +373,13 @@ public class MyMap2D implements Map2D{
 
 		return tempMap;
 	}
+	/**
+	 * This function should be used as a sub part of the MyMap2D.shortestPath function
+	 * Given an x, y coordinates return is 4 neighbors (not diagonally) if they are valid to be in the path
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @return The valid neighbors as an ArrayList of Point2D objects
+	 */
 	private ArrayList<Point2D> getValidNeighbors(int x, int y) {
 		ArrayList<Point2D> neighbors = new ArrayList<>();
 
@@ -326,6 +409,21 @@ public class MyMap2D implements Map2D{
 
 		return neighbors;
 	}
+	/**
+	 * This function should be used as a sub part of the MyMap2D.shortestPath function
+	 * Given a Point2D object return is 4 neighbors (not diagonally) if they are valid to be in the path
+	 * @param p The processed Point2D
+	 * @return The valid neighbors as an ArrayList of Point2D objects
+	 */
+	private ArrayList<Point2D> getValidNeighbors(Point2D p){
+		return getValidNeighbors(p.ix(), p.iy());
+	}
+
+	/**
+	 * This function determine if the ending point have been reached
+	 * @param endPoint The ending point
+	 * @return true/false the ending point has been reached/ not been reached
+	 */
 	private boolean checkEnd(Point2D endPoint){
 		for (Point2D neighbor :getValidNeighbors(endPoint)){
 			if (this.getPixel(neighbor) >= 0){
@@ -334,19 +432,34 @@ public class MyMap2D implements Map2D{
 		}
 		return false;
 	}
-	private ArrayList<Point2D> getValidNeighbors(Point2D p){
-		return getValidNeighbors(p.ix(), p.iy());
-	}
+	/**
+	 * This function check if a Point2D is in the _map array attribute
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @return true/false
+	 */
 	private boolean isIn(int x, int y){
 		boolean xIn = (x>=0 && x<this.getWidth());
 		boolean yIn = (y>=0 && y<this.getHeight());
 
 		return xIn && yIn;
 	}
+	/**
+	 * This function check if a Point2D is in the _map array attribute
+	 * @param p The given Point2D
+	 * @return true/false
+	 */
 	private boolean isIn(Point2D p){
 
 		return isIn(p.ix(), p.iy());
 	}
+
+	/**
+	 * Using the MyMap2D.forwardSearch return the length of the shortest path
+	 * @param p1 the starting point
+	 * @param p2 the ending point
+	 * @return the lenght of the path
+	 */
 	@Override
 	public int shortestPathDist(Point2D p1, Point2D p2) {
 		MyMap2D tempMap = this.initShortestPathMap(p1, p2);
@@ -359,6 +472,10 @@ public class MyMap2D implements Map2D{
 
 	}
 
+	/**
+	 * This function is filling the whole _map attribute by a single color
+	 * @param c - The color by which the map will be filled
+	 */
 	@Override
 	public void fill(int c) {
 		for(int x = 0;x<this.getWidth();x++) {
