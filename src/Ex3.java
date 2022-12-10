@@ -138,6 +138,18 @@ public class Ex3 {
 			_map.fill(p, col);
 		}
 
+		// RECT
+		if(_mode.equals("ShortestPath")) {
+			if (tempP.ix() == -1) {
+				tempP = p;
+			}
+
+			else {
+				_map.shortestPath(tempP, p);
+				tempP = new Point2D(-1, -1);
+			}
+		}
+
 		// GOL
 		if(_mode.equals("Gol")) {
 			_map.nextGenGol();	
