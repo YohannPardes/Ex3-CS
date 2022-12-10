@@ -217,47 +217,64 @@ public class MyMap2D implements Map2D{
 	@Override
 	public Point2D[] shortestPath(Point2D p1, Point2D p2) {
 		// TODO Auto-generated method stub
-		MyMap2D tempMap = this.initShortestPathMap(p1, p2);
 
-//		ArrayList<Point2D> nextSteps = new ArrayList<Point2D>(); // the array holding all the neighbors
-//		ArrayList<Point2D> currentCheckedPoint = new ArrayList<Point2D>(); // the array holding all the current potential steps
-//		currentCheckedPoint.add(p1);
+		MyMap2D tempMap = this.initShortestPathMap(p1, p2);
+		forwardSearch(p2, tempMap);
+		Point2D[] shortestPath = backwardTracking(p1, p2, tempMap);
+		return shortestPath;
+	}
+	private Point2D[] backwardTracking(Point2D p1, Point2D p2, MyMap2D tempMap) {
+		ArrayList <Point2D> shortestPath = new ArrayList<Point2D>();
+		shortestPath.add(p2);
+
+		Point2D currentPoint = p2;
+		while (tempMap.getPixel(currentPoint) != 0) {
+
+			Point2D savedP = null;
+			int min = this.getWidth() * this.getWidth(); // initializing at a known maximum value
+			for (Point2D neighbor : getValidNeighbors(currentPoint)) {
+
+				int neighborVal = tempMap.getPixel(neighbor);
+				if (neighborVal >= 0 && neighborVal < min) {
+					min = neighborVal;
+					savedP = neighbor;
+				}
+			}
+			shortestPath.add(savedP);
+			currentPoint = savedP;
+			System.out.println(tempMap.getPixel(currentPoint));
+		}
+
+		Point2D[] returnVal = shortestPath.toArray(new Point2D[shortestPath.size()]);
+		return returnVal;
+	}
+	private static int forwardSearch(Point2D p2, MyMap2D tempMap) {
+		ArrayList<Point2D> nextSteps = new ArrayList<Point2D>(); // the array holding all the neighbors
 
 		int currentStep = 0;
-
-		boolean run = true;
-		while (run) {
-
+		boolean update = true;
+		while (update) {
+			System.out.println(tempMap);
 			//update the neighbors of each not blank cell (-1)
+			update = false;
 			for (int x = 0; x < tempMap.getWidth(); x++) {
 				for (int y = 0; y < tempMap.getHeight(); y++) {
-					if (tempMap.getPixel(x, y) == currentStep) {
-						for (Point2D neighbor : tempMap.getValidNeighbors(x, y)) {
-							if (tempMap.getPixel(x, y) == -10) { // if we are reaching the end
-								run = false;
-								tempMap.setPixel(x, y, currentStep);
+					nextSteps = tempMap.getValidNeighbors(x, y);
+					for (Point2D neighbor : nextSteps) {
+						if (tempMap.getPixel(neighbor) == currentStep && tempMap.getPixel(x, y) == -1) {
+							tempMap.setPixel(x, y, currentStep + 1);
+							update = true;
 
-
-								// getting out of the loops
-								x = tempMap.getWidth() + 1;
-								y = tempMap.getHeight() + 1;
-
-								for (int i = 0; i < tempMap.getWidth(); i++) {
-									System.out.println(Arrays.toString(tempMap._map[i]));
-								}
+							if (tempMap.checkEnd(p2)) { //getting out of the loops
+								return currentStep;
 							}
-
-							else {
-
-								tempMap.setPixel(neighbor, currentStep + 1);}
-
 						}
 					}
 				}
-				currentStep += 1;
 			}
+			currentStep += 1;
 		}
-		return null;
+		return -1;
 	}
 	private MyMap2D initShortestPathMap(Point2D p1, Point2D p2) {
 		MyMap2D tempMap = new MyMap2D(this.getHeight());
@@ -274,8 +291,8 @@ public class MyMap2D implements Map2D{
 		}
 
 		// starting point, ending point
-		tempMap.setPixel(p1, 0);
 		tempMap.setPixel(p2, -10);
+		tempMap.setPixel(p1, 0);
 
 		return tempMap;
 	}
@@ -284,49 +301,55 @@ public class MyMap2D implements Map2D{
 
 		// check right
 		Point2D rightN = new Point2D(x + 1, y);
-		if (isIn(rightN) && this.getPixel(rightN) == -1) {
+		if (isIn(rightN) && this.getPixel(rightN) != -2) {
 			neighbors.add(rightN);
 		}
 
 		// check left
 		Point2D leftN = new Point2D(x - 1, y);
-		if (isIn(leftN) && this.getPixel(leftN) == -1) {
+		if (isIn(leftN) && this.getPixel(leftN) != -2) {
 			neighbors.add(leftN);
 		}
 
 		// check up
 		Point2D upN = new Point2D(x, y + 1);
-		if (isIn(upN) && this.getPixel(upN) == -1) {
+		if (isIn(upN) && this.getPixel(upN) != -2) {
 			neighbors.add(upN);
 		}
 
 		// check down
 		Point2D downN = new Point2D(x, y - 1);
-		if (isIn(downN) && this.getPixel(downN) == -1) {
+		if (isIn(downN) && this.getPixel(downN) != -2) {
 			neighbors.add(downN);
 		}
 
 		return neighbors;
 	}
+	private boolean checkEnd(Point2D endPoint){
+		for (Point2D neighbor :getValidNeighbors(endPoint)){
+			if (this.getPixel(neighbor) >= 0){
+				return true;
+			}
+		}
+		return false;
+	}
 	private ArrayList<Point2D> getValidNeighbors(Point2D p){
 		return getValidNeighbors(p.ix(), p.iy());
 	}
 	private boolean isIn(int x, int y){
-		boolean xIn = (x>=0 && x<=this.getWidth());
-		boolean yIn = (y>=0 && y<=this.getHeight());
+		boolean xIn = (x>=0 && x<this.getWidth());
+		boolean yIn = (y>=0 && y<this.getHeight());
 
 		return xIn && yIn;
 	}
-
 	private boolean isIn(Point2D p){
 
 		return isIn(p.ix(), p.iy());
 	}
-
 	@Override
 	public int shortestPathDist(Point2D p1, Point2D p2) {
-		// TODO Auto-generated method stub
-		return 0;
+		MyMap2D tempMap = this.initShortestPathMap(p1, p2);
+		return forwardSearch(p2, tempMap);
 	}
 
 	@Override
@@ -342,5 +365,16 @@ public class MyMap2D implements Map2D{
 				this.setPixel(x, y, c);
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		String str = "";
+
+		for (int i = 0; i<this.getHeight(); i+=1){
+			str += Arrays.toString(this._map[i]) + "\n";
+		}
+
+		return str;
 	}
 }

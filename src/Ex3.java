@@ -145,7 +145,10 @@ public class Ex3 {
 			}
 
 			else {
-				_map.shortestPath(tempP, p);
+				Point2D[] path = _map.shortestPath(tempP, p);
+				for (Point2D P : path){
+					_map.setPixel(P,col);
+				}
 				tempP = new Point2D(-1, -1);
 			}
 		}
