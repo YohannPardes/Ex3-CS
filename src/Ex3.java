@@ -14,7 +14,7 @@ public class Ex3 {
 	private static String _mode = "";
 	public static final int WHITE = Color.WHITE.getRGB();
 	public static final int BLACK = Color.BLACK.getRGB();
-	public static Point2D tempP = new Point2D(-1, -1);
+	public static Point2D tempP = null;
 	public static String tempM = "";
 	public static void main(String[] args) {
 		int dim = 10;  // init matrix (map) 10*10
@@ -55,12 +55,12 @@ public class Ex3 {
 		_mode = p;
 
 		//colors
-		if(p.equals("Blue")) {_color = Color.BLUE; }
-		if(p.equals("White")) {_color = Color.WHITE; }
-		if(p.equals("Black")) {_color = Color.BLACK; }
-		if(p.equals("Yellow")) {_color = Color.YELLOW; }
-		if(p.equals("Green")) {_color = Color.GREEN; }
-		if(p.equals("Red")) {_color = Color.RED; }
+		if(p.equals("Blue")) {_color = Color.BLUE; _mode = tempM;}
+		if(p.equals("White")) {_color = Color.WHITE;  _mode = tempM;}
+		if(p.equals("Black")) {_color = Color.BLACK;  _mode = tempM;}
+		if(p.equals("Yellow")) {_color = Color.YELLOW;  _mode = tempM;}
+		if(p.equals("Green")) {_color = Color.GREEN;  _mode = tempM;}
+		if(p.equals("Red")) {_color = Color.RED;  _mode = tempM;}
 
 		//resolutions
 		if(p.equals("20x20")) {init(20);}
@@ -77,11 +77,11 @@ public class Ex3 {
 	public static void mouseClicked(Point2D p) {
 		System.out.println(p);
 		int col = _color.getRGB();
+		//resetting the temporary values if the mode is changed
 		if (!(_mode.equals(tempM))){
 			tempM = _mode;
-			tempP = new Point2D (-1, -1);
+			tempP = null;
 		}
-
 
 		// POINT
 		if(_mode.equals("Point")) {
@@ -90,21 +90,20 @@ public class Ex3 {
 
 		// SEGMENT
 		if(_mode.equals("Segment")) {
-			if (tempP.ix() == -1){
+			if (tempP == null){
 				tempP = p;
-				tempM = _mode;
 			}
 
 			else {
 				_map.drawSegment(tempP, p, col);
-				tempP = new Point2D (-1, -1);
+				tempP = null;
 
 			}
 		}
 
 		// CIRCLE
 		if(_mode.equals("Circle")) {
-			if (tempP.ix() == -1) {
+			if (tempP == null) {
 				tempP = p;
 			}
 
@@ -119,7 +118,7 @@ public class Ex3 {
 
 		// RECT
 		if(_mode.equals("Rect")) {
-			if (tempP.ix() == -1) {
+			if (tempP == null) {
 				tempP = p;
 			}
 
@@ -136,7 +135,7 @@ public class Ex3 {
 
 		// RECT
 		if(_mode.equals("ShortestPath")) {
-			if (tempP.ix() == -1) {
+			if (tempP == null) {
 				tempP = p;
 			}
 
@@ -145,7 +144,7 @@ public class Ex3 {
 				for (Point2D P : path){
 					_map.setPixel(P,col);
 				}
-				tempP = new Point2D(-1, -1);
+				tempP = null;
 			}
 		}
 
@@ -153,6 +152,7 @@ public class Ex3 {
 		if(_mode.equals("Gol")) {
 			_map.nextGenGol();	
 		}
+
 		drawArray(_map);
 	}
 	static private void drawPixel(int x, int y) {
