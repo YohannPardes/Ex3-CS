@@ -69,7 +69,7 @@ public class Ex3 {
 		if(p.equals("160x160")) {init(160);}
 
 		// CLEAR
-		if(p.equals("Clear")) init(_map.getWidth());
+		if(p.equals("Clear")) _map.fill(WHITE);
 
 		drawArray(_map);
 		
@@ -93,11 +93,9 @@ public class Ex3 {
 			if (tempP == null){
 				tempP = p;
 			}
-
 			else {
 				_map.drawSegment(tempP, p, col);
 				tempP = null;
-
 			}
 		}
 
@@ -106,13 +104,10 @@ public class Ex3 {
 			if (tempP == null) {
 				tempP = p;
 			}
-
 			else {
-
-				// dx^2 + dy^2 (not sqrt for simplified calculation)
-				double rad = (Math.pow(p.ix() - tempP.ix(), 2) + Math.pow(p.iy()-tempP.iy(), 2));
+				double rad = Math.sqrt(Math.pow(p.ix() - tempP.ix(), 2) + Math.pow(p.iy()-tempP.iy(), 2));
 				_map.drawCircle(tempP, rad, col);
-				tempP = new Point2D(-1, -1);
+				tempP = null;
 			}
 		}
 
@@ -124,7 +119,7 @@ public class Ex3 {
 
 			else {
 				_map.drawRect(tempP, p, col);
-				tempP = new Point2D(-1, -1);
+				tempP = null;
 			}
 		}
 
@@ -138,7 +133,6 @@ public class Ex3 {
 			if (tempP == null) {
 				tempP = p;
 			}
-
 			else {
 				Point2D[] path = _map.shortestPath(tempP, p);
 				for (Point2D P : path){

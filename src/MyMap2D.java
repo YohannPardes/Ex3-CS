@@ -91,6 +91,15 @@ public class MyMap2D implements Map2D{
 	public void setPixel(Point2D p, int v) {
 		setPixel(p.ix(), p.iy(), v);
 	}
+
+	/**
+	 *
+	 * @return  _the map attribute
+	 */
+	public int[][] getMap(){
+		return this._map;
+	}
+
 	/**
 	 * This function draw a 2D line given a starting point and an ending point and a color.
 	 * This is an implementation of Bresenham’s line Algorithm.*
@@ -176,7 +185,7 @@ public class MyMap2D implements Map2D{
 				Point2D currentP = new Point2D(p.ix()+x, p.iy()+y);
 
 				boolean isInbound = ((0<=currentP.ix() & currentP.ix()<getWidth()) & (0<=currentP.iy() & currentP.iy()<getHeight()));
-				if ((isInbound) && (calcDSquared(p, currentP)<rad)){
+				if ((isInbound) && (dist(p, currentP)<rad)){
 
 					setPixel(currentP, col);
 				}
@@ -190,10 +199,10 @@ public class MyMap2D implements Map2D{
 	 * @param p2  second point
 	 * @return squaredDistance
 	 */
-	public static double calcDSquared(Point2D p1, Point2D p2){
+	public static double dist(Point2D p1, Point2D p2){
 		double dx = Math.pow((p1.ix() - p2.ix()), 2);
 		double dy = Math.pow((p1.iy() - p2.iy()), 2);
-		return dx + dy;
+		return Math.sqrt(dx + dy);
 	}
 
 	/**
