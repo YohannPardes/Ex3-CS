@@ -207,17 +207,55 @@ public class MyMap2D implements Map2D{
 
 	/**
 	 * Given point2D object, the wanted color, and the changed color,
-	 * 	the function fill the area with the wanted color
+	 * 	the function fill the area with the wanted color using a wave propagation like algorithm
 	 * @param p The chosen point for filling the area
 	 * @param newCol The color that will replace the old color
 	 * @return 0
 	 */
 	@Override
 	public int fill(Point2D p, int newCol) {
+		MyMap2D tempMap = initMap(p);
+		ArrayList<Point2D> nextSteps; // the array holding all the neighbors
 
-		int filledCol = getPixel(p);
-		fillRec(p.ix(), p.iy(), newCol, filledCol);
-		return 0;
+		int currentStep = 0;
+		boolean update = true;
+		while (update) {
+			update = false;
+			for (int x = 0; x < tempMap.getWidth(); x++) {
+				for (int y = 0; y < tempMap.getHeight(); y++) {
+					nextSteps = tempMap.getValidNeighbors(x, y);
+					for (Point2D neighbor : nextSteps) {
+						//update the neighbors of each not blank cell (-1)
+						if (tempMap.getPixel(neighbor) == currentStep && tempMap.getPixel(x, y) == -1) {
+							tempMap.setPixel(x, y, currentStep + 1);
+							update = true;
+						}
+					}
+				}
+			}
+			currentStep += 1;
+		}
+		this.drawMap(tempMap, newCol);
+
+		return currentStep;
+	}
+
+	/**
+	 * Draw all the positive value of the map for MyMap2D.fill
+	 * @param MyMap  Processed map from fill func
+	 * @param color The color to draw
+	 *
+	 * This function is a sub part of MyMap2D.fill
+	 */
+	private void drawMap(MyMap2D MyMap, int color){
+
+		for (int x = 0; x < MyMap.getWidth(); x++) {
+			for (int y = 0; y < MyMap.getHeight(); y++) {
+				if (MyMap.getPixel(x, y) >= 0){
+					this.setPixel(x, y, color);
+				}
+			}
+		}
 	}
 
 	/**
@@ -230,41 +268,10 @@ public class MyMap2D implements Map2D{
 	 */
 	@Override
 	public int fill(int x, int y, int newCol) {
-		int filledCol = getPixel(x, y);
-		fillRec(x, y, newCol, filledCol);
+		int a = 0;
 		return 0;
 	}
 
-	/**
-	 *Given x, y coordinate, the wanted color, and the changed color,
-	 *this recursive function draw the inner part of a close form
-	 *Warning : reaching stack overflow for 160*160 grid size (25600 potential calls)
-	 *(this function is a sub part of the fill function)
-	 */
-	public void fillRec(int x, int y, int newCol, int oldCol){
-
-		this.setPixel(x, y, newCol);
-
-		// up
-		if ((0 <= y+1 & y+1< getHeight()) && this.getPixel(x, y + 1) == oldCol){
-			fillRec(x, y + 1, newCol, oldCol);
-		}
-
-		// down
-		if ((0 <= y-1 & y-1< getHeight()) && this.getPixel(x, y - 1) == oldCol){
-			fillRec(x, y - 1, newCol, oldCol);
-		}
-
-		// right
-		if ((0 <= x+1 & x+1< getWidth()) && this.getPixel(x + 1, y) == oldCol){
-			fillRec(x + 1, y, newCol, oldCol);
-		}
-
-		// left
-		if ((0 <= x-1 & x-1< getWidth()) && this.getPixel(x - 1, y) == oldCol){
-			fillRec(x - 1, y, newCol, oldCol);
-		}
-	}
 
 	/**
 	 * This function draw the shortest path between two 2D points
@@ -363,9 +370,15 @@ public class MyMap2D implements Map2D{
 	 * @return the processed MyMap2D
 	 */
 	private MyMap2D initShortestPathMap(Point2D p1, Point2D p2) {
+		MyMap2D map = initMap(p1);
+		map.setPixel(p2, -10);
+		return map;
+	}
+
+	private MyMap2D initMap(Point2D p){
 		MyMap2D tempMap = new MyMap2D(this.getHeight());
 
-		int clickedColor = this.getPixel(p1);
+		int clickedColor = this.getPixel(p);
 		for (int x = 0; x<this.getWidth(); x+=1) {
 			for (int y = 0; y<this.getWidth(); y+=1) {
 				tempMap.setPixel(x, y, -1);
@@ -376,10 +389,8 @@ public class MyMap2D implements Map2D{
 			}
 		}
 
-		// starting point, ending point
-		tempMap.setPixel(p2, -10);
-		tempMap.setPixel(p1, 0);
-
+		// starting point
+		tempMap.setPixel(p, 0);
 		return tempMap;
 	}
 	/**
