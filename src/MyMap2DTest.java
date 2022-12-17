@@ -57,7 +57,7 @@ class MyMap2DTest {
      * based on setPixel function
      */
     @Test
-    void getPixel() {
+    void getPixelintint() {
 
         testMap.setPixel(1, 1, 10);
         testMap.setPixel(4, 4, 2);
@@ -73,19 +73,23 @@ class MyMap2DTest {
     }
 
     @Test
-    void testGetPixel() {
-        int[][] expectedRes = {
-                {0, 0, 0, 0, 0},
-                {0, 10, 0, 0, 0},
-                {0, 0, -100, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 2}
-        };
+    void testGetPixelPoint2D() {
 
+        testMap.setPixel(new Point2D(1, 1), 10);
+        testMap.setPixel(new Point2D(4, 4), 2);
+        testMap.setPixel(new Point2D(0, 4), -100);
+        testMap.setPixel(new Point2D(4, 1), -3);
+
+        assertEquals(10, testMap.getPixel(new Point2D(1, 1)));
+        assertEquals(2, testMap.getPixel(new Point2D(4, 4)));
+        assertEquals(-100, testMap.getPixel(new Point2D(0, 4)));
+        assertEquals(-3, testMap.getPixel(new Point2D(4, 1)));
+        assertEquals(0, testMap.getPixel(new Point2D(2, 1)));
+        assertNotEquals(1, testMap.getPixel(new Point2D(3, 4)));
     }
 
     @Test
-    void setPixel() {
+    void setPixelintint() {
         int[][] expectedRes = {
                 {0, 0, 0, 0, -100},
                 {0, 10, 0, 0, 0},
@@ -103,7 +107,7 @@ class MyMap2DTest {
     }
 
     @Test
-    void testSetPixel() {
+    void testSetPixelPoint2D() {
         int[][] expectedRes = {
                 {0, 0, 0, 0, -100},
                 {0, 10, 0, 0, 0},
@@ -340,12 +344,6 @@ class MyMap2DTest {
 
     @Test
     void getSumAliveNeighbors(){
-
-        int[][] expectedRes = {
-                {0, 1, 0},
-                {0, 0, 0},
-                {1, 0, 0}
-        };
 
         testMap.setPixel(0, 1, Ex3.BLACK);
         testMap.setPixel(2, 0, Ex3.BLACK);

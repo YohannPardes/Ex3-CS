@@ -79,7 +79,6 @@ public class MyMap2D implements Map2D{
 	 * @param x x coordinate
 	 * @param y y coordinate
 	 * @param v the wanted color
-	 * @return pixel value
 	 */
 	public void setPixel(int x, int y, int v) {_map[x][y] = v;}
 
@@ -87,7 +86,6 @@ public class MyMap2D implements Map2D{
 	 * Given a 2DPoint change the color at his x, y coordinates
 	 * @param p The Point2D from which check the color
 	 * @param v the wanted color
-	 * @return pixel value
 	 */
 	public void setPixel(Point2D p, int v) {
 		setPixel(p.ix(), p.iy(), v);
@@ -492,21 +490,21 @@ public class MyMap2D implements Map2D{
 	public void nextGenGol() {
 
 		MyMap2D tempMap = new MyMap2D(this.getWidth(), this.getHeight());
-		int aliveNeihgbors;
+		int aliveNeighbors;
 		for (int x = 0; x < this.getWidth(); x++) {
 			for (int y = 0; y < this.getHeight(); y++) {
-				aliveNeihgbors = getSumAliveNeighbors(x, y);
-				if (aliveNeihgbors <= 1){
+				aliveNeighbors = getSumAliveNeighbors(x, y);
+				if (aliveNeighbors <= 1){
 					tempMap.setPixel(x, y, WHITE);
 				}
-				else if (aliveNeihgbors == 2){
+				else if (aliveNeighbors == 2){
 					tempMap.setPixel(x, y, this.getPixel(x, y));
 				}
-				else if (aliveNeihgbors == 3){
+				else if (aliveNeighbors == 3){
 					tempMap.setPixel(x, y, BLACK);
 				}
 
-				else if (aliveNeihgbors >= 4){
+				else if (aliveNeighbors >= 4){
 					tempMap.setPixel(x, y, WHITE);
 				}
 			}
