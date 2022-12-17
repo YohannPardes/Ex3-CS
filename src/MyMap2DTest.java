@@ -5,6 +5,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
+/**
+ * 332514140
+ * This class implements a Junit test for the MyMap2D class
+ */
 class MyMap2DTest {
 
     private MyMap2D testMap;
@@ -147,13 +151,11 @@ class MyMap2DTest {
         testMap.drawRect(new Point2D(2, 1), new Point2D(4, 4),1);
         testMap.drawRect(new Point2D(0, 1), new Point2D(2, 2),-3);
 
-        printMap(testMap);
-
         assertArrayEquals(expectedRes, testMap.getMap());
     }
 
     /**
-     * Testing out of bounds circle
+     * Testing out-of-bounds circle
      */
     @Test
     void drawCircle2() {
@@ -184,8 +186,6 @@ class MyMap2DTest {
         testMap.init(20, 20);
         testMap.drawCircle(new Point2D(10, 0), 5, 1);
 
-        printMap(testMap);
-
         assertArrayEquals(expectedRes, testMap.getMap());
     }
 
@@ -208,8 +208,6 @@ class MyMap2DTest {
 
         testMap.init(10, 10);
         testMap.drawCircle(new Point2D(5, 5), 4, 1);
-
-        printMap(testMap);
 
         assertArrayEquals(expectedRes, testMap.getMap());
     }
@@ -246,17 +244,65 @@ class MyMap2DTest {
 
         testMap.fill(5, 5, -10);
 
-        printMap(testMap);
-
         assertArrayEquals(expectedRes, testMap.getMap());
     }
 
     @Test
     void shortestPath() {
+
+        int[][] expectedRes = {
+            //   0  1  2  3  4  5  6  7  8  9
+                {3, 3, 3, 3, 3, 1, 0, 0, 0, 0},
+                {1, 1, 1, 1, 3, 1, 0, 0, 0, 0},
+                {1, 1, 1, 1, 3, 1, 0, 0, 0, 0},
+                {1, 1, 1, 1, 3, 1, 0, 0, 0, 0},
+                {1, 1, 1, 1, 3, 1, 0, 0, 0, 0},
+                {0, 0, 0, 0, 3, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 3, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 3, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 3, 3, 3, 3, 3, 0},
+                {0, 0, 0, 0, 0, 0, 0, 1, 1, 0}
+        };
+
+        //setting up the map 2d
+        testMap.init(10, 10);
+        testMap.drawRect(new Point2D(0, 0), new Point2D(4, 5), 1);
+        testMap.drawRect(new Point2D(8, 7), new Point2D(9, 8), 1);
+
+        testMap.drawSegment(new Point2D(3, 4), new Point2D(8, 4), 1);
+        testMap.drawSegment(new Point2D(8, 4), new Point2D(8, 6), 1);
+
+        // computing the shortest path
+        Point2D[] path = testMap.shortestPath(new Point2D(0, 0), new Point2D(8, 8));
+        Point2D[] path2 = testMap.shortestPath(new Point2D(9, 0), new Point2D(0, 9));
+
+        for (Point2D p : path) {
+            testMap.setPixel(p, 3);
+        }
+
+        assertArrayEquals(expectedRes, testMap.getMap());
+        assertArrayEquals(new Point2D[0], path2);
+
     }
 
     @Test
     void shortestPathDist() {
+
+        //setting up the map 2d
+        testMap.init(10, 10);
+        testMap.drawRect(new Point2D(0, 0), new Point2D(4, 5), 1);
+        testMap.drawRect(new Point2D(8, 7), new Point2D(9, 8), 1);
+
+        testMap.drawSegment(new Point2D(3, 4), new Point2D(8, 4), 1);
+        testMap.drawSegment(new Point2D(8, 4), new Point2D(8, 6), 1);
+
+        // computing the shortest path
+        Point2D[] path = testMap.shortestPath(new Point2D(0, 0), new Point2D(8, 8));
+        Point2D[] path2 = testMap.shortestPath(new Point2D(9, 0), new Point2D(0, 9));
+
+        assertEquals(17, path.length);
+        assertEquals(0, path2.length);
+
     }
 
     @Test
@@ -264,17 +310,57 @@ class MyMap2DTest {
 
         int[][] expectedRes = {
                 //   0  1  2  3  4  5  6  7  8  9
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, Ex3.BLACK, -1, -1, -1},
+                {-1, -1, -1, -1, Ex3.BLACK, -1, Ex3.BLACK, -1, -1, -1},
+                {-1, -1, -1, -1, -1, Ex3.BLACK, Ex3.BLACK, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
+                {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
         };
+
+        testMap.init(10, 10);
+        testMap.setPixel(0, 1, Ex3.BLACK);
+        testMap.setPixel(1, 2, Ex3.BLACK);
+        testMap.setPixel(2, 0, Ex3.BLACK);
+        testMap.setPixel(2, 1, Ex3.BLACK);
+        testMap.setPixel(2, 2, Ex3.BLACK);
+
+        for (int i = 0; i < 18; i++) {
+            testMap.nextGenGol();
+
+        }
+
+        assertArrayEquals(expectedRes, testMap.getMap());
+
+    }
+
+    @Test
+    void getSumAliveNeighbors(){
+
+        int[][] expectedRes = {
+                {0, 1, 0},
+                {0, 0, 0},
+                {1, 0, 0}
+        };
+
+        testMap.setPixel(0, 1, Ex3.BLACK);
+        testMap.setPixel(2, 0, Ex3.BLACK);
+
+        int res1 = testMap.getSumAliveNeighbors(1, 1);
+        int res2 = testMap.getSumAliveNeighbors(0, 0);
+        int res3 = testMap.getSumAliveNeighbors(2, 2);
+        int res4 = testMap.getSumAliveNeighbors(2, 0);
+
+        assertEquals(2, res1);
+        assertEquals(1, res2);
+        assertEquals(0, res3);
+        assertEquals(0, res4);
+
+
 
     }
 

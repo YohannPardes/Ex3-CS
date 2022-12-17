@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
 /**
+ * 332514140
  * This class implements the Map2D interface.
  * The available actions are:
  * Fill - filling a space.
@@ -279,7 +280,6 @@ public class MyMap2D implements Map2D{
 	 */
 	@Override
 	public Point2D[] shortestPath(Point2D p1, Point2D p2){
-		// TODO Auto-generated method stub
 
 		MyMap2D tempMap = this.initShortestPathMap(p1, p2);
 		forwardSearch(p2, tempMap);
@@ -521,7 +521,7 @@ public class MyMap2D implements Map2D{
 	 * @param y the y coordinate
 	 * @return The number of alive neighbors
 	 */
-	private int getSumAliveNeighbors(int x, int y) {
+	public int getSumAliveNeighbors(int x, int y) {
 		int sum = 0;
 		for (int xIncr = -1; xIncr <= 1; xIncr++) {
 			for (int yIncr = -1; yIncr <= 1; yIncr++) {
