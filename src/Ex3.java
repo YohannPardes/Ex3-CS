@@ -9,6 +9,7 @@ import java.awt.Color;
  *
  */
 public class Ex3 {
+
 	private static  Map2D _map = null;
 	private static Color _color = Color.blue;
 	private static String _mode = "";
@@ -16,6 +17,7 @@ public class Ex3 {
 	public static final int BLACK = Color.BLACK.getRGB();
 	public static Point2D tempP = null;
 	public static String tempM = "";
+	public static boolean GOL = false;
 	public static void main(String[] args) {
 		int dim = 10;  // init matrix (map) 10*10
 		init(dim);
@@ -77,8 +79,11 @@ public class Ex3 {
 	public static void mouseClicked(Point2D p) {
 		System.out.println(p);
 		int col = _color.getRGB();
+
 		//resetting the temporary values if the mode is changed
 		if (!(_mode.equals(tempM))){
+			if (_mode.equals("Gol")){GOL = true; MyMap2D.initGOL(_map);}
+			else {GOL = false;}
 			tempM = _mode;
 			tempP = null;
 		}

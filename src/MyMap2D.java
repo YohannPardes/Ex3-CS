@@ -184,8 +184,7 @@ public class MyMap2D implements Map2D{
 			for (int y = (int)(-1*rad); y < rad + 1; y++) {
 				Point2D currentP = new Point2D(p.ix()+x, p.iy()+y);
 
-				boolean isInbound = ((0<=currentP.ix() & currentP.ix()<getWidth()) & (0<=currentP.iy() & currentP.iy()<getHeight()));
-				if ((isInbound) && (dist(p, currentP)<rad)){
+				if (isIn(currentP) && (dist(p, currentP)<rad)){
 
 					setPixel(currentP, col);
 				}
@@ -200,8 +199,8 @@ public class MyMap2D implements Map2D{
 	 * @return squaredDistance
 	 */
 	public static double dist(Point2D p1, Point2D p2){
-		double dx = Math.pow((p1.ix() - p2.ix()), 2);
-		double dy = Math.pow((p1.iy() - p2.iy()), 2);
+		double dx = Math.pow((p1.x() - p2.x()), 2);
+		double dy = Math.pow((p1.y() - p2.y()), 2);
 		return Math.sqrt(dx + dy);
 	}
 
@@ -268,8 +267,7 @@ public class MyMap2D implements Map2D{
 	 */
 	@Override
 	public int fill(int x, int y, int newCol) {
-		int a = 0;
-		return 0;
+		return fill(new Point2D(x, y), newCol);
 	}
 
 
@@ -486,10 +484,68 @@ public class MyMap2D implements Map2D{
 		return forwardSearch(p2, tempMap);
 	}
 
+	/**
+	 * This function compute and draw the next game of life iteration from a 2D map
+	 *
+	 */
 	@Override
 	public void nextGenGol() {
-		// TODO Auto-generated method stub
 
+		MyMap2D tempMap = new MyMap2D(this.getWidth(), this.getHeight());
+		int aliveNeihgbors;
+		for (int x = 0; x < this.getWidth(); x++) {
+			for (int y = 0; y < this.getHeight(); y++) {
+				aliveNeihgbors = getSumAliveNeighbors(x, y);
+				if (aliveNeihgbors <= 1){
+					tempMap.setPixel(x, y, WHITE);
+				}
+				else if (aliveNeihgbors == 2){
+					tempMap.setPixel(x, y, this.getPixel(x, y));
+				}
+				else if (aliveNeihgbors == 3){
+					tempMap.setPixel(x, y, BLACK);
+				}
+
+				else if (aliveNeihgbors >= 4){
+					tempMap.setPixel(x, y, WHITE);
+				}
+			}
+		}
+		this._map = tempMap._map;
+	}
+
+	/**
+	 * This function should be used as a sub part of the MyMap2D.nextGenGol function
+	 * Given an x, y coordinates return the number of alive numbers
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @return The number of alive neighbors
+	 */
+	private int getSumAliveNeighbors(int x, int y) {
+		int sum = 0;
+		for (int xIncr = -1; xIncr <= 1; xIncr++) {
+			for (int yIncr = -1; yIncr <= 1; yIncr++) {
+				if (isIn(x + xIncr, y + yIncr) && !(xIncr == 0 && yIncr == 0)) {
+					if (this.getPixel(x + xIncr, y + yIncr) == BLACK) {
+						sum++;
+					}
+				}
+			}
+		}
+		return sum;
+	}
+
+	/**
+	 * Initializing the map for Game Of Life
+	 */
+	public static void initGOL(Map2D map){
+		for (int x = 0; x < map.getWidth(); x++) {
+			for (int y = 0; y < map.getHeight(); y++) {
+				if (map.getPixel(x, y) != WHITE && map.getPixel(x, y) != BLACK){
+					map.setPixel(x, y, WHITE);
+				}
+			}
+		}
 	}
 
 	/**
