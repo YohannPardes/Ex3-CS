@@ -213,28 +213,32 @@ public class MyMap2D implements Map2D{
 	@Override
 	public int fill(Point2D p, int newCol) {
 		MyMap2D tempMap = initMap(p);
-		ArrayList<Point2D> nextSteps; // the array holding all the neighbors
+		ArrayList<Point2D> neighbors; // the array holding all the neighbors
+		ArrayList<Point2D> currentSteps = new ArrayList<>();
+		ArrayList<Point2D> nextSteps = new ArrayList<>(); // the array holding the next checked cells
+		currentSteps.add(p);
+
 
 		int currentStep = 0;
 		boolean update = true;
 		while (update) {
 			update = false;
-			for (int x = 0; x < tempMap.getWidth(); x++) {
-				for (int y = 0; y < tempMap.getHeight(); y++) {
-					nextSteps = tempMap.getValidNeighbors(x, y);
-					for (Point2D neighbor : nextSteps) {
-						//update the neighbors of each not blank cell (-1)
-						if (tempMap.getPixel(neighbor) == currentStep && tempMap.getPixel(x, y) == -1) {
-							tempMap.setPixel(x, y, currentStep + 1);
-							update = true;
-						}
+			for (Point2D cell : currentSteps) {
+				neighbors = tempMap.getValidNeighbors(cell.ix(), cell.iy());
+				for (Point2D neighbor : neighbors) {
+					//update the neighbors of each not blank cell (-1)
+					if (tempMap.getPixel(neighbor) == -1) {
+						nextSteps.add(new Point2D(neighbor));
+						tempMap.setPixel(neighbor, currentStep + 1);
+						update = true;
 					}
 				}
 			}
+			currentSteps = (ArrayList<Point2D>) nextSteps.clone();
+			nextSteps.clear();
 			currentStep += 1;
 		}
 		this.drawMap(tempMap, newCol);
-
 		return currentStep;
 	}
 
@@ -272,6 +276,9 @@ public class MyMap2D implements Map2D{
 
 	/**
 	 * This function draw the shortest path between two 2D points
+	 *
+	 * Using a wave propagation like algorithm
+	 *
 	 * @param p1  the first point
 	 * @param p2  the second points
 	 * @return - an array of 2D points
@@ -280,41 +287,46 @@ public class MyMap2D implements Map2D{
 	public Point2D[] shortestPath(Point2D p1, Point2D p2){
 
 		MyMap2D tempMap = this.initShortestPathMap(p1, p2);
-		forwardSearch(p2, tempMap);
+		forwardSearch(p1, p2, tempMap);
 		return backwardTracking(p2, tempMap);
 	}
 
 	/**
 	 * This function is a sub part of MyMap2D.shortestPath function
 	 * Given a processed MyMap2D using MyMap2D.initShortestPathMap updating the map until reaching the end point
-	 * using a simple wave propagation algorithm
+	 * using a simple wave propagation algorithm while checking the potential next cells only
 	 * @param p2 the ending point of the wanted path
 	 * @param tempMap The pre-processed map from MyMap2D.initShortestPathMap
 	 * @return the number of steps required to complete the path or -1 if there is no valid path
 	 */
-	private static int forwardSearch(Point2D p2, MyMap2D tempMap) {
-		ArrayList<Point2D> nextSteps; // the array holding all the neighbors
+	private static int forwardSearch(Point2D p1, Point2D p2, MyMap2D tempMap) {
+		ArrayList<Point2D> neighbors; // the array holding all the neighbors
+		ArrayList<Point2D> currentSteps = new ArrayList<>();
+		ArrayList<Point2D> nextSteps = new ArrayList<>(); // the array holding the next checked cells
+		currentSteps.add(p1);
+
 
 		int currentStep = 0;
 		boolean update = true;
 		while (update) {
 			update = false;
-			for (int x = 0; x < tempMap.getWidth(); x++) {
-				for (int y = 0; y < tempMap.getHeight(); y++) {
-					nextSteps = tempMap.getValidNeighbors(x, y);
-					for (Point2D neighbor : nextSteps) {
-						//update the neighbors of each not blank cell (-1)
-						if (tempMap.getPixel(neighbor) == currentStep && tempMap.getPixel(x, y) == -1) {
-							tempMap.setPixel(x, y, currentStep + 1);
-							update = true;
+			for (Point2D cell: currentSteps) {
+				neighbors = tempMap.getValidNeighbors(cell.ix(), cell.iy());
+				for (Point2D neighbor : neighbors) {
+					//update the neighbors of each not blank cell (-1)
+					if (tempMap.getPixel(neighbor) == -1) {
+						nextSteps.add(new Point2D(neighbor));
+						tempMap.setPixel(neighbor, currentStep + 1);
+						update = true;
 
-							if (tempMap.checkEnd(p2)) { //getting out of the loops
-								return currentStep;
-							}
+						if (tempMap.checkEnd(p2)) { //getting out of the loops
+							return currentStep;
 						}
 					}
 				}
 			}
+			currentSteps = (ArrayList<Point2D>) nextSteps.clone();
+			nextSteps.clear();
 			currentStep += 1;
 		}
 		return -1;
@@ -479,7 +491,7 @@ public class MyMap2D implements Map2D{
 	@Override
 	public int shortestPathDist(Point2D p1, Point2D p2) {
 		MyMap2D tempMap = this.initShortestPathMap(p1, p2);
-		return forwardSearch(p2, tempMap);
+		return forwardSearch(p1, p2, tempMap);
 	}
 
 	/**
