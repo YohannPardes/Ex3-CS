@@ -156,12 +156,13 @@ public class MyMap2D implements Map2D{
 	@Override
 	public void drawRect(Point2D p1, Point2D p2, int col) {
 
-		//drawing all the points in the square
+		//setting up the rect data from the 2 points
 		int deltaX = Math.abs(p1.ix() - p2.ix());
 		int deltaY = Math.abs(p1.iy() - p2.iy());
 		int bottomLeftX = Math.min(p1.ix(), p2.ix());
 		int bottomLeftY = Math.min(p1.iy(), p2.iy());
 
+		//drawing all the points in the square
 		for (int x = 0; x < deltaX + 1; x++) {
 			for (int y = 0; y < deltaY + 1; y++) {
 				setPixel(bottomLeftX + x, bottomLeftY + y, col);
@@ -184,7 +185,6 @@ public class MyMap2D implements Map2D{
 				Point2D currentP = new Point2D(p.ix()+x, p.iy()+y);
 
 				if (isIn(currentP) && (dist(p, currentP)<rad)){
-
 					setPixel(currentP, col);
 				}
 			}
@@ -214,10 +214,9 @@ public class MyMap2D implements Map2D{
 	public int fill(Point2D p, int newCol) {
 		MyMap2D tempMap = initMap(p);
 		ArrayList<Point2D> neighbors; // the array holding all the neighbors
-		ArrayList<Point2D> currentSteps = new ArrayList<>();
+		ArrayList<Point2D> currentSteps = new ArrayList<>(); //the current cells to be checked
 		ArrayList<Point2D> nextSteps = new ArrayList<>(); // the array holding the next checked cells
 		currentSteps.add(p);
-
 
 		int currentStep = 0;
 		boolean update = true;
@@ -226,9 +225,8 @@ public class MyMap2D implements Map2D{
 			for (Point2D cell : currentSteps) {
 				neighbors = tempMap.getValidNeighbors(cell.ix(), cell.iy());
 				for (Point2D neighbor : neighbors) {
-					//update the neighbors of each not blank cell (-1)
 					if (tempMap.getPixel(neighbor) == -1) {
-						nextSteps.add(new Point2D(neighbor));
+						nextSteps.add(new Point2D(neighbor)); //add the cell for the next iteration
 						tempMap.setPixel(neighbor, currentStep + 1);
 						update = true;
 					}
@@ -313,9 +311,8 @@ public class MyMap2D implements Map2D{
 			for (Point2D cell: currentSteps) {
 				neighbors = tempMap.getValidNeighbors(cell.ix(), cell.iy());
 				for (Point2D neighbor : neighbors) {
-					//update the neighbors of each not blank cell (-1)
 					if (tempMap.getPixel(neighbor) == -1) {
-						nextSteps.add(new Point2D(neighbor));
+						nextSteps.add(new Point2D(neighbor)); //add the cell for the next iteration
 						tempMap.setPixel(neighbor, currentStep + 1);
 						update = true;
 
@@ -346,7 +343,7 @@ public class MyMap2D implements Map2D{
 		while (tempMap.getPixel(currentPoint) != 0) {
 
 			Point2D savedP = null;
-			int min = this.getWidth() * this.getWidth(); // initializing at a known maximum value
+			int min = this.getWidth() * this.getHeight(); // initializing at a known maximum value
 			for (Point2D neighbor : getValidNeighbors(currentPoint)) {
 
 				int neighborVal = tempMap.getPixel(neighbor);
@@ -478,7 +475,6 @@ public class MyMap2D implements Map2D{
 	 * @return true/false
 	 */
 	private boolean isIn(Point2D p){
-
 		return isIn(p.ix(), p.iy());
 	}
 
@@ -496,7 +492,10 @@ public class MyMap2D implements Map2D{
 
 	/**
 	 * This function compute and draw the next game of life iteration from a 2D map
-	 *
+	 * Using the following rules:
+	 * 		1- if 2 alive neighbors cells keep the same state
+	 * 		2- if 3 alive neighbors	change to alive
+	 * 		3- if less than 2 or more than 3 alive neighbors kill the cell
 	 */
 	@Override
 	public void nextGenGol() {
@@ -557,7 +556,6 @@ public class MyMap2D implements Map2D{
 			}
 		}
 	}
-
 	/**
 	 * This function is filling the whole _map attribute by a single color
 	 * @param c - The color by which the map will be filled

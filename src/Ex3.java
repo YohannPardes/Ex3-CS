@@ -34,7 +34,6 @@ public class Ex3 {
 		_map.fill(WHITE);
 		drawArray(_map);		
 	}
-
 	/**
 	 * Drawing lines connecting between the circles
 	 * @param map - the map holding the information
@@ -49,7 +48,6 @@ public class Ex3 {
 			 StdDraw_Ex3.line(0, i, w, i);
 		 }
 	}
-
 	/**
 	 * This function draw a Map2D object to the screen
 	 * @param map The map to draw.
