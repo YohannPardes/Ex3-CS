@@ -7,10 +7,8 @@ import java.awt.Color;
  * Written for 101 java course it uses simple static functions to allow a 
  * "Singleton-like" implementation.
  * You should change this class!
- *
  */
 public class Ex3 {
-
 	private static  Map2D _map = null;
 	private static Color _color = Color.blue;
 	private static String _mode = "";
@@ -23,6 +21,11 @@ public class Ex3 {
 		int dim = 10;  // init matrix (map) 10*10
 		init(dim);
 	}
+
+	/**
+	 * Initializing the map as a white map
+	 * @param x The wanted size of the array
+	 */
 	private static void init(int x) {
 		StdDraw_Ex3.clear();
 		_map = new MyMap2D(x);
@@ -31,6 +34,11 @@ public class Ex3 {
 		_map.fill(WHITE);
 		drawArray(_map);		
 	}
+
+	/**
+	 * Drawing lines connecting between the circles
+	 * @param map - the map holding the information
+	 */
 	 public static void drawGrid(Map2D map) {
 		 int w = map.getWidth();
 		 int h = map.getHeight();
@@ -41,19 +49,29 @@ public class Ex3 {
 			 StdDraw_Ex3.line(0, i, w, i);
 		 }
 	}
-	static public void drawArray(Map2D a) {
+
+	/**
+	 * This function draw a Map2D object to the screen
+	 * @param map The map to draw.
+	 */
+	static public void drawArray(Map2D map) {
 		StdDraw_Ex3.clear();
 		StdDraw_Ex3.setPenColor(Color.gray);
 		drawGrid(_map);
-		for(int y=0;y<a.getWidth();y++) {
-			for(int x=0;x<a.getHeight();x++) {
-				int c = a.getPixel(x, y);
+		for(int y=0;y<map.getWidth();y++) {
+			for(int x=0;x<map.getHeight();x++) {
+				int c = map.getPixel(x, y);
 				StdDraw_Ex3.setPenColor(new Color(c));
 				drawPixel(x,y);
 			}
 		}		
 		StdDraw_Ex3.show();
 	}
+
+	/**
+	 * Buttons event handler
+	 * @param p
+	 */
 	public static void actionPerformed(String p) {
 		_mode = p;
 
@@ -77,6 +95,11 @@ public class Ex3 {
 		drawArray(_map);
 		
 	}
+
+	/**
+	 * Mouse clicked event handler
+	 * @param p The pressed point.
+	 */
 	public static void mouseClicked(Point2D p) {
 		System.out.println(p);
 		int col = _color.getRGB();
@@ -155,6 +178,12 @@ public class Ex3 {
 
 		drawArray(_map);
 	}
+
+	/**
+	 * Drawing a single pixel represented as a circle
+	 * @param x the x coordinate to draw the circle
+	 * @param y the y coordinate to draw the circle
+	 */
 	static private void drawPixel(int x, int y) {
 		StdDraw_Ex3.filledCircle(x, y, 0.3);
 	}
