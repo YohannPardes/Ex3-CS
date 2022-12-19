@@ -233,8 +233,8 @@ public class MyMap2D implements Map2D{
 				}
 			}
 			currentSteps = (ArrayList<Point2D>) nextSteps.clone();
+			currentStep += nextSteps.size();
 			nextSteps.clear();
-			currentStep += 1;
 		}
 		this.drawMap(tempMap, newCol);
 		return currentStep;
@@ -380,12 +380,17 @@ public class MyMap2D implements Map2D{
 		return map;
 	}
 
+	/**
+	 * This function init a temporary map for the shortest path algorithm
+	 * @param p The starting point of the path
+	 * @return a MyMap2D initialized for the path
+	 */
 	private MyMap2D initMap(Point2D p){
 		MyMap2D tempMap = new MyMap2D(this.getHeight());
 
 		int clickedColor = this.getPixel(p);
 		for (int x = 0; x<this.getWidth(); x+=1) {
-			for (int y = 0; y<this.getWidth(); y+=1) {
+			for (int y = 0; y<this.getHeight(); y+=1) {
 				tempMap.setPixel(x, y, -1);
 
 				if (this.getPixel(x, y) != clickedColor) {

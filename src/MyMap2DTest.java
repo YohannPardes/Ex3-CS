@@ -283,12 +283,9 @@ class MyMap2DTest {
         for (Point2D p : path) {
             testMap.setPixel(p, 3);
         }
-
         assertArrayEquals(expectedRes, testMap.getMap());
         assertArrayEquals(new Point2D[0], path2);
-
     }
-
     @Test
     void shortestPathDist() {
 

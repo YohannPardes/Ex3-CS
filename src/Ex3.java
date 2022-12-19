@@ -68,7 +68,7 @@ public class Ex3 {
 
 	/**
 	 * Buttons event handler
-	 * @param p
+	 * @param p The button clicked as a string
 	 */
 	public static void actionPerformed(String p) {
 		_mode = p;
